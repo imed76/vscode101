@@ -8,3 +8,4 @@ console.log(n);
 n = 2;
 
 sayHello('VS Code');
+sayHello('VS Code!!!');
