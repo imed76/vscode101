@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Range Splitter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif; 
+            margin: 20px;
+        }
+
+        input[type="number"] {
+            width: 80px;
+            margin-right: 10px;
+        }
+
+        button {
+            margin: 10px 0;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Range Splitter</h1>
+
+<p>Enter lower and upper endpoints:</p>
+<input type="number" id="lower" value="7">
+<input type="number" id="upper" value="123">
+<button onclick="generateRanges()">Generate</button>
+
+<div class="result" id="result"></div>
+
+<script>
+// 1000 - 1100 -> 1 000 - 1 100
+// 000 - 100
+// 1-9, 10-99, 100
+// 00[1-9], 0[10-99], 100
+
+function generateRanges() {
+    const lowerEndPoint = parseInt(document.getElementById('lower').value, 10);
+    const upperEndPoint = parseInt(document.getElementById('upper').value, 10);
+
+    if (isNaN(lowerEndPoint) || isNaN(upperEndPoint) || lowerEndPoint > upperEndPoint) {
+        document.getElementById('result').innerText = "Please enter valid numbers (lower <= upper).";
+        return;
+    }
+
+    const segments = splitRange(lowerEndPoint, upperEndPoint);
+    document.getElementById('result').innerText = segments.join(', ');
+}
+
+function splitRange(lower, upper) {
+    let segments = [];
+    let start = lower;
+
+    while (start <= upper) {
+        let boundary = nextBoundary(start);
+        // If the boundary goes beyond the upper, cap it at upper
+        if (boundary > upper) {
+            boundary = upper;
+        }
+        
+        segments.push(`${start}-${boundary}`);
+        
+        // Move to next start
+        start = boundary + 1;
+    }
+    return segments;
+}
+
+/**
+ * Find the next boundary that ends in all 9's at or after the given number.
+ * If input is 7, next boundary is 9.
+ * If input is 10, next boundary is 99.
+ * If input is 123, next boundary is 999.
+ */
+function nextBoundary(num) {
+    // Convert number to string
+    let str = String(num);
+    // Determine the magnitude by replacing all but the first digit with '9'
+    // But we must consider the level of the boundary properly.
+    // The boundary should be:
+    // - If num is single digit (1-9), next boundary is 9
+    // - If num is 2-digit (e.g. 23), next boundary is 99
+    // - If num is 3-digit (e.g. 345), next boundary is 999
+    // Essentially, we find the length of the number and create a boundary of that length:
+    // But if number is already something like 90, next boundary is still 99, etc.
+    
+    const length = str.length;
+    // Construct a boundary of the same length with all '9's.
+    let allNines = '9'.repeat(length);
+    let boundary = parseInt(allNines, 10);
+
+    // If our number is greater than the boundary we constructed, then we need the next level up:
+    // For example, if num = 999, boundary = 999, but we need the next boundary as 9999.
+    // But in this case, if num = 999, that boundary is correct. The next iteration would handle the next block.
+    // If num = 1000, boundary = 999 (three 9's), which is less than 1000, so we go up one magnitude:
+    if (boundary < num) {
+        boundary = parseInt('9'.repeat(length + 1), 10);
+    }
+
+    return boundary;
+}
+</script>
+
+</body>
+</html>

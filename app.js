@@ -1,11 +1,13 @@
-function sayHello(name) {
-    m = 1;
-    console.log(`Hello, ${name}`);
+function greetEveryone() {
+    n = 2;
+    console.log(greet());
 }
-n = 1;
 
-console.log(n);
-n = 2;
+function greet() {
+    n = 3;
+    return 'Rise & Shine, Contractors';
+}
 
-sayHello('VS Code');
-sayHello('VS Code!!!');
+let n = 1;
+
+greetEveryone();
