@@ -13,5 +13,3 @@ let n = 1;
 greetEveryone();
 
 console.log("test");
-console.log("test");
-console.log("test3");
