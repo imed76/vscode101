@@ -11,3 +11,5 @@ function greet() {
 let n = 1;
 
 greetEveryone();
+
+console.log("test");
